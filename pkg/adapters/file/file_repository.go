@@ -2,7 +2,6 @@ package file
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -26,13 +25,11 @@ func (rep *FileRepository) CreateBlock(ctx context.Context, blockDump *model.Blo
 	}
 	defer f.Close()
 
-	bdBytes, err := json.Marshal(blockDump)
-	if err != nil {
-		return err
-	}
-	_, err = f.Write(bdBytes)
-	if err != nil {
-		return err
+	for _, d := range blockDump.Dump {
+		_, err = f.WriteString(d)
+		if err != nil {
+			return err
+		}
 	}
 	_ = f.Sync()
 	return nil
